@@ -15,10 +15,9 @@ ENV PLAYWRIGHT_BROWSERS_PATH=${PLAYWRIGHT_BROWSERS_PATH}
 # Set the working directory
 WORKDIR /app
 
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=secret,id=npmrc,target=/root/.npmrc,required=false \
-  npm ci --omit=dev && \
+COPY package.json package-lock.json ./
+
+RUN npm ci --omit=dev && \
   # Install system dependencies for playwright
   npx -y playwright-core install-deps chromium
 
@@ -27,10 +26,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 # ------------------------------
 FROM base AS builder
 
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=secret,id=npmrc,target=/root/.npmrc,required=false \
-  npm ci
+RUN npm ci
 
 # Copy the rest of the app
 COPY *.json *.js *.ts .
