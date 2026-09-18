@@ -62,4 +62,4 @@ COPY --chown=${USERNAME}:${USERNAME} cli.js package.json ./
 WORKDIR /home/${USERNAME}
 
 # Run in headless and only with chromium (other browsers need more dependencies not included in this image)
-ENTRYPOINT ["node", "/app/cli.js", "--headless", "--browser", "chromium", "--no-sandbox"]
+ENTRYPOINT ["sh","-c","exec node /app/cli.js --headless --browser chromium --no-sandbox --host 0.0.0.0 --port \"${PORT:-8931}\" --allowed-hosts playwright-mcp-production-7293.up.railway.app,localhost,127.0.0.1"]
